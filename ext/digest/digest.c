@@ -541,12 +541,12 @@ static rb_digest_metadata_t *
 get_digest_base_metadata(VALUE klass)
 {
     VALUE p;
-    VALUE obj;
+    VALUE ptr_num;
     rb_digest_metadata_t *algo;
 
     for (p = klass; !NIL_P(p); p = rb_class_superclass(p)) {
         if (rb_ivar_defined(p, id_metadata)) {
-            obj = rb_ivar_get(p, id_metadata);
+            ptr_num = rb_ivar_get(p, id_metadata);
             break;
         }
     }
@@ -554,7 +554,7 @@ get_digest_base_metadata(VALUE klass)
     if (NIL_P(p))
         rb_raise(rb_eRuntimeError, "Digest::Base cannot be directly inherited in Ruby");
 
-    if (!RB_TYPE_P(obj, T_DATA) || RTYPEDDATA_P(obj)) {
+    if (!RB_INTEGER_TYPE_P(ptr_num)) {
       wrong:
         if (p == klass)
             rb_raise(rb_eTypeError, "%"PRIsVALUE"::metadata is not initialized properly",
@@ -564,9 +564,7 @@ get_digest_base_metadata(VALUE klass)
                      klass, p);
     }
 
-#undef RUBY_UNTYPED_DATA_WARNING
-#define RUBY_UNTYPED_DATA_WARNING 0
-    Data_Get_Struct(obj, rb_digest_metadata_t, algo);
+    algo = NUM2PTR(ptr_num);
 
     if (!algo) goto wrong;
 
@@ -764,6 +762,10 @@ InitVM_digest(void)
      * module Digest
      */
     rb_mDigest = rb_define_module("Digest");
+
+#ifdef HAVE_RB_EXT_RACTOR_SAFE
+    rb_ext_ractor_safe(true);
+#endif
 
     /* module functions */
     rb_define_module_function(rb_mDigest, "hexencode", rb_digest_s_hexencode, 1);
