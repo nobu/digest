@@ -47,7 +47,7 @@ Init_sha2(void)
     cDigest_SHA##bitlen = rb_define_class_under(mDigest, "SHA" #bitlen, cDigest_Base); \
 \
     rb_ivar_set(cDigest_SHA##bitlen, id_metadata, \
-               Data_Wrap_Struct(0, 0, 0, (void *)&sha##bitlen));
+                rb_obj_freeze(Data_Wrap_Struct(0, 0, 0, (void *)&sha##bitlen)));
 
     FOREACH_BITLEN(DEFINE_ALGO_CLASS)
 }
