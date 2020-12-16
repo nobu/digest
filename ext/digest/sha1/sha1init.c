@@ -59,5 +59,8 @@ Init_sha1(void)
 
     cDigest_SHA1 = rb_define_class_under(mDigest, "SHA1", cDigest_Base);
 
-    rb_iv_set(cDigest_SHA1, "metadata", PTR2NUM(&sha1));
+#undef RUBY_UNTYPED_DATA_WARNING
+#define RUBY_UNTYPED_DATA_WARNING 0
+    rb_iv_set(cDigest_SHA1, "metadata",
+             Data_Wrap_Struct(0, 0, 0, (void *)&sha1));
 }

@@ -541,12 +541,12 @@ static rb_digest_metadata_t *
 get_digest_base_metadata(VALUE klass)
 {
     VALUE p;
-    VALUE ptr_num;
+    VALUE obj;
     rb_digest_metadata_t *algo;
 
     for (p = klass; !NIL_P(p); p = rb_class_superclass(p)) {
         if (rb_ivar_defined(p, id_metadata)) {
-            ptr_num = rb_ivar_get(p, id_metadata);
+            obj = rb_ivar_get(p, id_metadata);
             break;
         }
     }
@@ -554,7 +554,7 @@ get_digest_base_metadata(VALUE klass)
     if (NIL_P(p))
         rb_raise(rb_eRuntimeError, "Digest::Base cannot be directly inherited in Ruby");
 
-    if (!RB_INTEGER_TYPE_P(ptr_num)) {
+    if (!RB_TYPE_P(obj, T_DATA) || RTYPEDDATA_P(obj)) {
       wrong:
         if (p == klass)
             rb_raise(rb_eTypeError, "%"PRIsVALUE"::metadata is not initialized properly",
@@ -564,7 +564,9 @@ get_digest_base_metadata(VALUE klass)
                      klass, p);
     }
 
-    algo = NUM2PTR(ptr_num);
+#undef RUBY_UNTYPED_DATA_WARNING
+#define RUBY_UNTYPED_DATA_WARNING 0
+    Data_Get_Struct(obj, rb_digest_metadata_t, algo);
 
     if (!algo) goto wrong;
 

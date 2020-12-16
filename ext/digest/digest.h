@@ -15,14 +15,6 @@
 
 #include "ruby.h"
 
-#if SIZEOF_VOIDP == SIZEOF_LONG_LONG
-#   define PTR2NUM(p) ULL2NUM((unsigned LONG_LONG)(p))
-#   define NUM2PTR(n) ((void *)NUM2ULL(n))
-#elif SIZEOF_VOIDP == SIZEOF_LONG
-#   define PTR2NUM(p) ULONG2NUM((unsigned long)(p))
-#   define NUM2PTR(n) ((void *)NUM2ULONG(n))
-#endif
-
 #define RUBY_DIGEST_API_VERSION	3
 
 typedef int (*rb_digest_hash_init_func_t)(void *);

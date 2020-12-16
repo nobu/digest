@@ -53,5 +53,8 @@ Init_rmd160(void)
 
     cDigest_RMD160 = rb_define_class_under(mDigest, "RMD160", cDigest_Base);
 
-    rb_iv_set(cDigest_RMD160, "metadata", PTR2NUM(&rmd160));
+#undef RUBY_UNTYPED_DATA_WARNING
+#define RUBY_UNTYPED_DATA_WARNING 0
+    rb_iv_set(cDigest_RMD160, "metadata",
+             Data_Wrap_Struct(0, 0, 0, (void *)&rmd160));
 }
