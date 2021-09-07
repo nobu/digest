@@ -52,6 +52,7 @@ Gem::Specification.new do |spec|
     spec.files.reject! {|path| path.start_with?("ext/")}
     spec.files.concat [
       "lib/java/digest.jar",
+      "lib/java/digest.rb",
       "lib/java/digest/md5.rb",
       "lib/java/digest/sha1.rb",
       "lib/java/digest/sha2.rb",
