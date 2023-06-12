@@ -233,7 +233,7 @@ void SHA1_Update(SHA1_CTX *context, const uint8_t *data, size_t len)
 	(void)memcpy(&context->buffer[j], data, (i = 64-j));
 	SHA1_Transform(context->state, context->buffer);
 	for ( ; i + 63 < len; i += 64)
-	    SHA1_Transform(context->state, &data[i]);
+	    SHA1_Transform(context->state, *(uint8_t (*)[64])&data[i]);
 	j = 0;
     } else {
 	i = 0;
